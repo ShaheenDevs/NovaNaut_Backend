@@ -31,7 +31,7 @@ const sendVerificationEmail = async (email, token) => {
 
 const signUp = async (req, res) => {
     try {
-        const { name, email, phoneNo, profile, password, country, adress } = req.body;
+        const { fullName, email, phoneNo, profile, password, country } = req.body;
 
         // Check if the user already exists
         const existingUser = await models.User.findOne({ where: { email } });
@@ -40,16 +40,15 @@ const signUp = async (req, res) => {
         }
 
         // Validate user input
-        const user = { name, email, phoneNo, profile, password, country, adress };
+        const user = { fullName, email, phoneNo, profile, password, country };
         const schema = {
-            name: { type: "string", min: 5, optional: true },
+            fullName: { type: "string", min: 5 },
             email: { type: "string", min: 10 },
             // type: { type: "string",optional: true  },
             phoneNo: { type: "string", min: 9, optional: true },
             profile: { type: "string", optional: true },
             password: { type: "string", min: 8 },
             country: { type: "string", optional: true },
-            adress: { type: "string", optional: true },
         };
 
         const validationResponse = v.validate(user, schema);
@@ -57,7 +56,7 @@ const signUp = async (req, res) => {
             return res.status(200).json({ status: 400, message: "Validation failed", errors: validationResponse });
         }
         user.password = await bcrypt.hash(password, 12);
-        user.type = "unVerified";
+        user.emailVerified = false;
         // Create the new user with "verified" status set to false initially
         const newUser = await models.User.create({ ...user });
 
@@ -69,7 +68,7 @@ const signUp = async (req, res) => {
         );
 
         // Send the verification email
-        await sendVerificationEmail(newUser.email, verificationToken);
+        // await sendVerificationEmail(newUser.email, verificationToken);
 
         res.status(200).json({ status: 201, message: "User signed up successfully. Please check your email for verification.", data: newUser });
     } catch (error) {
@@ -129,7 +128,7 @@ const verifyEmail = async (req, res) => {
         }
 
         // Check if the user is already verified
-        if (user.type === "verified") {
+        if (user.emailVerified === true) {
             return res.status(200).send(`
                 <html>
                     <head>
@@ -150,7 +149,7 @@ const verifyEmail = async (req, res) => {
         }
 
         // Mark the user as verified
-        user.type = "verified";
+        user.emailVerified = true;
         await user.save();
 
         return res.status(200).send(`
@@ -210,10 +209,7 @@ const signIn = async (req, res) => {
 
         // Check if the user exists
         const user = await models.User.findOne({
-            where: { email }, include: [
-                { model: models.Language, as: 'language' },
-                { model: models.Level, as: 'level' }
-            ]
+            where: { email }
         });
         if (!user) {
             return res.status(200).json({ status: 404, message: 'No user registered with this email' });
@@ -268,30 +264,34 @@ const delUser = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { id, name, email, phoneNo, profile, password, country, adress } = req.body;
+        const { id, fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel } = req.body;
 
         // Find the user by ID
         const user = await models.User.findOne({ where: { id } });
         if (!user) {
-            return res.status(200).json({ status: 404, message: 'User not found' });
+            return res.status(404).json({ status: 404, message: 'User not found' });
         }
 
         // Validate the updated input
-        const updatedData = { name, email, phoneNo, profile, password, country, adress };
+        const updatedData = { fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel };
         const schema = {
-            name: { type: "string", min: 5, optional: true },
-            email: { type: "string", min: 10, optional: true },
-            // type: { type: "string", optional: true },
+            fullName: { type: "string", min: 5, optional: true },
+            // email: { type: "email", optional: true },
             phoneNo: { type: "string", optional: true },
             profile: { type: "string", optional: true },
             password: { type: "string", min: 8, optional: true },
             country: { type: "string", optional: true },
-            adress: { type: "string", optional: true },
+            kyc: { type: "string", optional: true },
+            blocked: { type: "boolean", optional: true },
+            subscribedPlan: { type: "string", optional: true },
+            balance: { type: "number", integer: true, optional: true },
+            emailVerified: { type: "boolean", optional: true },
+            miningLevel: { type: "number", integer: true, optional: true },
         };
 
         const validationResponse = v.validate(updatedData, schema);
         if (validationResponse !== true) {
-            return res.status(200).json({ status: 400, message: "Validation failed", errors: validationResponse });
+            return res.status(400).json({ status: 400, message: "Validation failed", errors: validationResponse });
         }
 
         // If a password is provided, hash it
@@ -305,36 +305,7 @@ const updateProfile = async (req, res) => {
         res.status(200).json({ status: 200, message: "Profile updated successfully", data: user });
     } catch (error) {
         console.error("Update profile error:", error);
-        res.status(200).json({ status: 500, message: 'An error occurred while updating the profile', error: error.message });
-    }
-};
-
-const updateRemainingProfile = async (req, res) => {
-    try {
-        const { id, languageId, levelId, region, dailyGoal, streak, progress } = req.body;
-
-        // Find the user by ID
-        const user = await models.User.findOne({
-            where: { id },
-            include: [
-                { model: models.Language, as: 'language', attributes: ['id', 'name'] },
-                { model: models.Level, as: 'level', attributes: ['id', 'name'] }
-            ]
-        });
-        if (!user) {
-            return res.status(200).json({ status: 404, message: 'User not found' });
-        }
-
-        // Validate the updated input
-        const updatedData = { languageId, levelId, region, dailyGoal, streak, progress };
-
-        // Update the user with the new data
-        await user.update(updatedData);
-
-        res.status(200).json({ status: 200, message: "Profile updated successfully", data: user });
-    } catch (error) {
-        console.error("Update profile error:", error);
-        res.status(200).json({ status: 500, message: 'An error occurred while updating the profile', error: error.message });
+        res.status(500).json({ status: 500, message: 'An error occurred while updating the profile', error: error.message });
     }
 };
 
@@ -344,5 +315,4 @@ module.exports = {
     delUser,
     verifyEmail,
     updateProfile,
-    updateRemainingProfile,
 };
