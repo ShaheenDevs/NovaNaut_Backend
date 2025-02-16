@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 15, 2025 at 06:16 PM
+-- Generation Time: Feb 16, 2025 at 05:37 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -24,6 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Docs`
+--
+
+CREATE TABLE `Docs` (
+  `id` int(11) NOT NULL,
+  `privacyPolicy` varchar(255) DEFAULT NULL,
+  `termsConditions` varchar(255) DEFAULT NULL,
+  `whitePaper` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Docs`
+--
+
+INSERT INTO `Docs` (`id`, `privacyPolicy`, `termsConditions`, `whitePaper`, `createdAt`, `updatedAt`) VALUES
+(1, 'test_3', 'test_4', 'test_1', '2025-02-16 11:08:35', '2025-02-16 12:06:20');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `SequelizeMeta`
 --
 
@@ -36,7 +58,10 @@ CREATE TABLE `SequelizeMeta` (
 --
 
 INSERT INTO `SequelizeMeta` (`name`) VALUES
-('20250215102615-create-user.js');
+('20250215102615-create-user.js'),
+('20250216100315-create-doc.js'),
+('20250216101512-create-version.js'),
+('20250216162150-create-wallpaper.js');
 
 -- --------------------------------------------------------
 
@@ -51,7 +76,7 @@ CREATE TABLE `Users` (
   `phoneNo` varchar(255) DEFAULT NULL,
   `country` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `kyc` varchar(255) DEFAULT NULL,
+  `kyc` tinyint(1) DEFAULT NULL,
   `blocked` tinyint(1) DEFAULT NULL,
   `subscribedPlan` varchar(255) DEFAULT NULL,
   `balance` int(11) DEFAULT NULL,
@@ -67,11 +92,61 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`id`, `fullName`, `email`, `phoneNo`, `country`, `password`, `kyc`, `blocked`, `subscribedPlan`, `balance`, `emailVerified`, `miningLevel`, `createdAt`, `updatedAt`, `profile`) VALUES
-(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'PK', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 'false', 0, 'free', 500, 1, 1, '2025-02-15 11:26:48', '2025-02-15 11:53:29', 'https://picsum.photos/200');
+(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'PK', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 0, 0, 'free', 500, 1, 1, '2025-02-15 11:26:48', '2025-02-15 11:53:29', 'https://picsum.photos/200'),
+(2, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 0, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Versions`
+--
+
+CREATE TABLE `Versions` (
+  `id` int(11) NOT NULL,
+  `version` varchar(11) DEFAULT NULL,
+  `forceUpdateVersion` varchar(11) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Versions`
+--
+
+INSERT INTO `Versions` (`id`, `version`, `forceUpdateVersion`, `createdAt`, `updatedAt`) VALUES
+(1, '1.0.0', '1.0.0', '2025-02-16 11:25:02', '2025-02-16 12:15:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Wallpapers`
+--
+
+CREATE TABLE `Wallpapers` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `imageUrl` varchar(255) DEFAULT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Wallpapers`
+--
+
+INSERT INTO `Wallpapers` (`id`, `title`, `imageUrl`, `category`, `createdAt`, `updatedAt`) VALUES
+(2, 'Beautiful Sunset', 'https://picsum.photos/200', 'Nature', '2025-02-16 16:30:05', '2025-02-16 16:30:05');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `Docs`
+--
+ALTER TABLE `Docs`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `SequelizeMeta`
@@ -87,14 +162,44 @@ ALTER TABLE `Users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `Versions`
+--
+ALTER TABLE `Versions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `Wallpapers`
+--
+ALTER TABLE `Wallpapers`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `Docs`
+--
+ALTER TABLE `Docs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `Versions`
+--
+ALTER TABLE `Versions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `Wallpapers`
+--
+ALTER TABLE `Wallpapers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
