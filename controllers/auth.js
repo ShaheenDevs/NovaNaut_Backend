@@ -44,11 +44,16 @@ const signUp = async (req, res) => {
         const schema = {
             fullName: { type: "string", min: 5 },
             email: { type: "string", min: 10 },
-            // type: { type: "string",optional: true  },
             phoneNo: { type: "string", min: 9, optional: true },
             profile: { type: "string", optional: true },
             password: { type: "string", min: 8 },
             country: { type: "string", optional: true },
+            kyc: { type: "string", optional: true, default: false },
+            blocked: { type: "boolean", optional: true, default: false },
+            subscribedPlan: { type: "string", optional: true, default: "free" },
+            balance: { type: "number", optional: true, default: 0 },
+            emailVerified: { type: "boolean", optional: true, default: false },
+            miningLevel: { type: "number", optional: true, default: 1 },
         };
 
         const validationResponse = v.validate(user, schema);
