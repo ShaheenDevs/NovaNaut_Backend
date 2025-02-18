@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 16, 2025 at 05:37 PM
+-- Generation Time: Feb 18, 2025 at 03:11 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -41,7 +41,32 @@ CREATE TABLE `Docs` (
 --
 
 INSERT INTO `Docs` (`id`, `privacyPolicy`, `termsConditions`, `whitePaper`, `createdAt`, `updatedAt`) VALUES
-(1, 'test_3', 'test_4', 'test_1', '2025-02-16 11:08:35', '2025-02-16 12:06:20');
+(1, '/documents/privacyPolicy.pdf', '/documents/termsConditions.pdf', '/documents/whitePaper.pdf', '2025-02-16 11:08:35', '2025-02-16 17:02:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Notifications`
+--
+
+CREATE TABLE `Notifications` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `imageUrl` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `userId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Notifications`
+--
+
+INSERT INTO `Notifications` (`id`, `title`, `description`, `link`, `imageUrl`, `createdAt`, `updatedAt`, `userId`) VALUES
+(1, 'Beautiful Sunset', 'Beautiful Sunset', 'Nature', 'https://picsum.photos/200', '2025-02-18 01:53:05', '2025-02-18 01:53:05', 0),
+(2, 'Beautiful Sunset', 'Beautiful Sunset', 'Nature', 'https://picsum.photos/200', '2025-02-18 01:54:21', '2025-02-18 01:54:21', 1);
 
 -- --------------------------------------------------------
 
@@ -61,7 +86,8 @@ INSERT INTO `SequelizeMeta` (`name`) VALUES
 ('20250215102615-create-user.js'),
 ('20250216100315-create-doc.js'),
 ('20250216101512-create-version.js'),
-('20250216162150-create-wallpaper.js');
+('20250216162150-create-wallpaper.js'),
+('20250218014707-create-notification.js');
 
 -- --------------------------------------------------------
 
@@ -92,8 +118,8 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`id`, `fullName`, `email`, `phoneNo`, `country`, `password`, `kyc`, `blocked`, `subscribedPlan`, `balance`, `emailVerified`, `miningLevel`, `createdAt`, `updatedAt`, `profile`) VALUES
-(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'PK', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 0, 0, 'free', 500, 1, 1, '2025-02-15 11:26:48', '2025-02-15 11:53:29', 'https://picsum.photos/200'),
-(2, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 0, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200');
+(0, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 0, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200'),
+(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'PK', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 0, 0, 'free', 500, 1, 1, '2025-02-15 11:26:48', '2025-02-15 11:53:29', 'https://picsum.photos/200');
 
 -- --------------------------------------------------------
 
@@ -149,6 +175,13 @@ ALTER TABLE `Docs`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `Notifications`
+--
+ALTER TABLE `Notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_notifications_user` (`userId`);
+
+--
 -- Indexes for table `SequelizeMeta`
 --
 ALTER TABLE `SequelizeMeta`
@@ -184,6 +217,12 @@ ALTER TABLE `Docs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `Notifications`
+--
+ALTER TABLE `Notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3003;
+
+--
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
@@ -200,6 +239,16 @@ ALTER TABLE `Versions`
 --
 ALTER TABLE `Wallpapers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `Notifications`
+--
+ALTER TABLE `Notifications`
+  ADD CONSTRAINT `fk_notifications_user` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
