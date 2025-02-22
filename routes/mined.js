@@ -4,7 +4,7 @@ const checkAuth = require('../middleware/check_auth');
 
 const router = express.Router();
 
-router.get('', minedCtrl.getMineTokens);
+router.get('', checkAuth, minedCtrl.getMineTokens);
 router.put('', checkAuth, minedCtrl.updateMineAbleTokens);
 
 module.exports = router;
