@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 18, 2025 at 03:11 AM
+-- Generation Time: Feb 22, 2025 at 12:22 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -42,6 +42,29 @@ CREATE TABLE `Docs` (
 
 INSERT INTO `Docs` (`id`, `privacyPolicy`, `termsConditions`, `whitePaper`, `createdAt`, `updatedAt`) VALUES
 (1, '/documents/privacyPolicy.pdf', '/documents/termsConditions.pdf', '/documents/whitePaper.pdf', '2025-02-16 11:08:35', '2025-02-16 17:02:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Mineds`
+--
+
+CREATE TABLE `Mineds` (
+  `id` int(11) NOT NULL,
+  `totalMineableTokens` int(11) DEFAULT NULL,
+  `totalMinedTokens` int(11) DEFAULT NULL,
+  `remainderTokens` int(11) DEFAULT NULL,
+  `isAllow` tinyint(1) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Mineds`
+--
+
+INSERT INTO `Mineds` (`id`, `totalMineableTokens`, `totalMinedTokens`, `remainderTokens`, `isAllow`, `createdAt`, `updatedAt`) VALUES
+(1, 600000, 600, 4400, 1, '2025-02-22 10:46:12', '2025-02-22 11:15:45');
 
 -- --------------------------------------------------------
 
@@ -87,7 +110,8 @@ INSERT INTO `SequelizeMeta` (`name`) VALUES
 ('20250216100315-create-doc.js'),
 ('20250216101512-create-version.js'),
 ('20250216162150-create-wallpaper.js'),
-('20250218014707-create-notification.js');
+('20250218014707-create-notification.js'),
+('20250222093454-create-mined.js');
 
 -- --------------------------------------------------------
 
@@ -118,7 +142,7 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`id`, `fullName`, `email`, `phoneNo`, `country`, `password`, `kyc`, `blocked`, `subscribedPlan`, `balance`, `emailVerified`, `miningLevel`, `createdAt`, `updatedAt`, `profile`) VALUES
-(0, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 0, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200'),
+(0, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 100, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200'),
 (1, 'Mudassir', 'abc@gmail.com', '1234567890', 'PK', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 0, 0, 'free', 500, 1, 1, '2025-02-15 11:26:48', '2025-02-15 11:53:29', 'https://picsum.photos/200');
 
 -- --------------------------------------------------------
@@ -175,6 +199,12 @@ ALTER TABLE `Docs`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `Mineds`
+--
+ALTER TABLE `Mineds`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `Notifications`
 --
 ALTER TABLE `Notifications`
@@ -214,6 +244,12 @@ ALTER TABLE `Wallpapers`
 -- AUTO_INCREMENT for table `Docs`
 --
 ALTER TABLE `Docs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `Mineds`
+--
+ALTER TABLE `Mineds`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
