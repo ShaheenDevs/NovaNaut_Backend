@@ -5,6 +5,7 @@ const docRouter = require('./doc')
 const versionRouter = require('./version')
 const wallpaperRouter = require('./wallpaper')
 const notificationRouter = require('./notification')
+const minedRouter = require('./mined')
 const imageRouter = require('./image')
 
 router.use('/auth', authRouter)
@@ -12,6 +13,7 @@ router.use('/doc', docRouter)
 router.use('/version', versionRouter)
 router.use('/wallpaper', wallpaperRouter)
 router.use('/notification', notificationRouter)
+router.use('/mined', minedRouter)
 router.use('/image', imageRouter)
 
 module.exports = router;
