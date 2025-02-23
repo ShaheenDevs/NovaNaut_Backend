@@ -7,6 +7,7 @@ const wallpaperRouter = require('./wallpaper')
 const notificationRouter = require('./notification')
 const minedRouter = require('./mined')
 const statisticsRouter = require('./admin/statistics')
+const usersRouter = require('./admin/users')
 const imageRouter = require('./image')
 
 router.use('/auth', authRouter)
@@ -16,6 +17,7 @@ router.use('/wallpaper', wallpaperRouter)
 router.use('/notification', notificationRouter)
 router.use('/mined', minedRouter)
 router.use('/statistics', statisticsRouter)
+router.use('/users', usersRouter)
 router.use('/image', imageRouter)
 
 module.exports = router;
