@@ -19,11 +19,11 @@ const manageMining = async (req, res) => {
             if (miningActive) {
                 minedAmount = parseFloat((elapsedHours * miningRate).toFixed(2));
 
-                // Claim rewards without restarting mining
-                await models.sequelize.transaction(async (t) => {
+                // // Claim rewards without restarting mining
+                // await models.sequelize.transaction(async (t) => {
                     user.balance += minedAmount;
-                    await user.save({ transaction: t });
-                });
+                //     await user.save({ transaction: t });
+                // });
 
                 return res.json({
                     message: "Mining active, rewards claimed",
@@ -52,6 +52,51 @@ const manageMining = async (req, res) => {
             balance: user.balance,
             miningStartTime: user.miningStartTime,
             timePercentage: 0,
+            miningRate
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+};
+
+const checkMiningStatus = async (req, res) => {
+    try {
+        const { userId } = req.userData;
+        let user = await models.User.findByPk(userId);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const currentTime = new Date();
+        let elapsedHours = 0;
+        let minedAmount = 0;
+        let miningActive = false;
+        const miningRate = user.miningLevel * 0.02; // Mining rate per hour
+
+        if (user.miningStartTime) {
+            elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
+            miningActive = elapsedHours < 24;
+
+            if (miningActive) {
+                minedAmount = parseFloat((elapsedHours * miningRate).toFixed(2));
+                return res.json({
+                    message: "Mining active, status checked",
+                    miningActive: true,
+                    minedAmount,
+                    balance: user.balance,
+                    timeLeft: (24 - elapsedHours).toFixed(2),
+                    timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
+                    miningRate
+                });
+            }
+        }
+
+        return res.json({
+            message: "Mining session expired, status checked",
+            miningActive: false,
+            minedAmount: parseFloat((24 * miningRate).toFixed(2)),
+            balance: user.balance,
+            miningStartTime: user.miningStartTime,
+            timePercentage: 100,
             miningRate
         });
 
@@ -90,5 +135,6 @@ const upgradeMiningLevel = async (req, res) => {
 
 module.exports = {
     manageMining,
+    checkMiningStatus,
     upgradeMiningLevel,
 };
