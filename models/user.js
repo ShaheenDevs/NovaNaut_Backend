@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     subscribedPlan: DataTypes.STRING,
     balance: DataTypes.INTEGER,
     emailVerified: DataTypes.BOOLEAN,
-    miningLevel: DataTypes.INTEGER
+    miningLevel: DataTypes.INTEGER,
+    miningStartTime:DataTypes.DATE
   }, {
     sequelize,
     modelName: 'User',
