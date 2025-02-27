@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     kyc: DataTypes.BOOLEAN,
     blocked: DataTypes.BOOLEAN,
     subscribedPlan: DataTypes.STRING,
+    refId: DataTypes.STRING,
     balance: DataTypes.INTEGER,
     emailVerified: DataTypes.BOOLEAN,
     miningLevel: DataTypes.INTEGER,

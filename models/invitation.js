@@ -10,13 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Invitation.belongsTo(models.User, { foreignKey: "senderId", as: "sender" });
-      Invitation.belongsTo(models.User, { foreignKey: "receiverId", as: "receiver" });
+      Invitation.belongsTo(models.User, { foreignKey: "reReferralBy", as: "user" });
      }
   }
   Invitation.init({
-    senderId: DataTypes.INTEGER,
-    receiverId: DataTypes.INTEGER,
+    reReferralBy: DataTypes.INTEGER,
+    newUserId: DataTypes.INTEGER,
     status: DataTypes.STRING,
   }, {
     sequelize,

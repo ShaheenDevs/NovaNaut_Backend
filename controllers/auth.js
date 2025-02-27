@@ -31,7 +31,7 @@ const sendVerificationEmail = async (email, token) => {
 
 const signUp = async (req, res) => {
     try {
-        const { fullName, email, phoneNo, profile, password, country } = req.body;
+        const { fullName, email, phoneNo, profile, password, country, reReferralBy } = req.body;
 
         // Check if the user already exists
         const existingUser = await models.User.findOne({ where: { email } });
@@ -66,14 +66,18 @@ const signUp = async (req, res) => {
         const newUser = await models.User.create({ ...user });
 
         // Create a verification token
-        const verificationToken = jwt.sign(
-            { userId: newUser.id, email: newUser.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        // const verificationToken = jwt.sign(
+        //     { userId: newUser.id, email: newUser.email },
+        //     process.env.JWT_SECRET,
+        //     { expiresIn: '7d' }
+        // );
 
         // Send the verification email
         // await sendVerificationEmail(newUser.email, verificationToken);
+        if (reReferralBy) {
+            const refId = extractLastNumber(reReferralBy)
+            await models.Invitation.create({ reReferralBy: refId, newUserId: newUser.id, status: "pending" });
+        }
 
         res.status(200).json({ status: 201, message: "User signed up successfully. Please check your email for verification.", data: newUser });
     } catch (error) {
@@ -269,7 +273,7 @@ const delUser = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { id, fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel } = req.body;
+        const { id, fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel, refId } = req.body;
 
         // Find the user by ID
         const user = await models.User.findOne({ where: { id } });
@@ -278,7 +282,7 @@ const updateProfile = async (req, res) => {
         }
 
         // Validate the updated input
-        const updatedData = { fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel };
+        const updatedData = { fullName, email, phoneNo, profile, password, country, kyc, blocked, subscribedPlan, balance, miningLevel, refId };
         const schema = {
             fullName: { type: "string", min: 5, optional: true },
             // email: { type: "email", optional: true },
@@ -321,3 +325,9 @@ module.exports = {
     verifyEmail,
     updateProfile,
 };
+
+function extractLastNumber(str) {
+    if (typeof str !== "string") return null; // Ensure str is a valid string
+    let match = str.match(/_(\d+)$/); // Find digits after the last "_"
+    return match ? match[1] : null;  // Return only the number after "_"
+}
