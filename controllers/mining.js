@@ -19,19 +19,21 @@ const manageMining = async (req, res) => {
             if (miningActive) {
                 minedAmount = parseFloat((elapsedHours * miningRate).toFixed(2));
 
-                // // Claim rewards without restarting mining
-                // await models.sequelize.transaction(async (t) => {
+                // Update balance
                 user.balance += minedAmount;
-                //     await user.save({ transaction: t });
-                // });
+                await user.save();
+
+                // Calculate timeLeft correctly (HH:MM format)
+                const remainingHours = Math.floor(24 - elapsedHours);
+                const remainingMinutes = Math.floor((24 - elapsedHours - remainingHours) * 60);
+                const timeLeft = `${remainingHours}:${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}`;
 
                 return res.json({
                     message: "Mining active, rewards claimed",
                     miningActive: true,
                     minedAmount,
                     balance: user.balance,
-                    timeLeft: (24 - elapsedHours).toFixed(2),
-                    timePercentage: "0",
+                    timeLeft, // Proper HH:MM format
                     timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
                     miningRate,
                     miningStartTime: user.miningStartTime,
@@ -52,7 +54,7 @@ const manageMining = async (req, res) => {
             miningActive: true,
             minedAmount,
             balance: user.balance,
-            timeLeft: "0",
+            timeLeft: "00:00",
             timePercentage: "0",
             miningRate,
             miningStartTime: user.miningStartTime,
@@ -81,13 +83,18 @@ const checkMiningStatus = async (req, res) => {
 
             if (miningActive) {
                 minedAmount = parseFloat((elapsedHours * miningRate).toFixed(2));
+
+                // Calculate timeLeft correctly (HH:MM format)
+                const remainingHours = Math.floor(24 - elapsedHours);
+                const remainingMinutes = Math.floor((24 - elapsedHours - remainingHours) * 60);
+                const timeLeft = `${remainingHours}:${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}`;
+
                 return res.json({
                     message: "Mining active, status checked",
                     miningActive: true,
                     minedAmount,
                     balance: user.balance,
-                    timeLeft: (24 - elapsedHours).toFixed(2),
-                    timePercentage: "0",
+                    timeLeft, // Proper HH:MM format
                     timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
                     miningRate,
                     miningStartTime: user.miningStartTime,
@@ -100,8 +107,7 @@ const checkMiningStatus = async (req, res) => {
             miningActive: false,
             minedAmount: parseFloat((24 * miningRate).toFixed(2)),
             balance: user.balance,
-            timeLeft: "0",
-            timePercentage: 0,
+            timeLeft: "00:00",
             timePercentage: "0",
             miningRate,
             miningStartTime: user.miningStartTime,
@@ -137,8 +143,6 @@ const upgradeMiningLevel = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
 };
-
-
 
 module.exports = {
     manageMining,
