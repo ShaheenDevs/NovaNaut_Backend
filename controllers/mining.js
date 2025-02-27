@@ -21,7 +21,7 @@ const manageMining = async (req, res) => {
 
                 // // Claim rewards without restarting mining
                 // await models.sequelize.transaction(async (t) => {
-                    user.balance += minedAmount;
+                user.balance += minedAmount;
                 //     await user.save({ transaction: t });
                 // });
 
@@ -31,8 +31,10 @@ const manageMining = async (req, res) => {
                     minedAmount,
                     balance: user.balance,
                     timeLeft: (24 - elapsedHours).toFixed(2),
+                    timePercentage: "0",
                     timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
-                    miningRate
+                    miningRate,
+                    miningStartTime: user.miningStartTime,
                 });
             }
         }
@@ -50,9 +52,10 @@ const manageMining = async (req, res) => {
             miningActive: true,
             minedAmount,
             balance: user.balance,
+            timeLeft: "0",
+            timePercentage: "0",
+            miningRate,
             miningStartTime: user.miningStartTime,
-            timePercentage: 0,
-            miningRate
         });
 
     } catch (error) {
@@ -84,8 +87,10 @@ const checkMiningStatus = async (req, res) => {
                     minedAmount,
                     balance: user.balance,
                     timeLeft: (24 - elapsedHours).toFixed(2),
+                    timePercentage: "0",
                     timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
-                    miningRate
+                    miningRate,
+                    miningStartTime: user.miningStartTime,
                 });
             }
         }
@@ -95,9 +100,11 @@ const checkMiningStatus = async (req, res) => {
             miningActive: false,
             minedAmount: parseFloat((24 * miningRate).toFixed(2)),
             balance: user.balance,
+            timeLeft: "0",
+            timePercentage: 0,
+            timePercentage: "0",
+            miningRate,
             miningStartTime: user.miningStartTime,
-            timePercentage: 100,
-            miningRate
         });
 
     } catch (error) {
