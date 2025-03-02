@@ -223,7 +223,6 @@ const signIn = async (req, res) => {
         if (!user) {
             return res.status(200).json({ status: 404, message: 'No user registered with this email' });
         }
-        const airdrop = await models.Airdrop.findOne({ where: { userId: user.id, status: "pending" } });
 
         // Check password
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -244,7 +243,6 @@ const signIn = async (req, res) => {
             message: "Signed in successfully",
             data: {
                 ...user.toJSON(),
-                airdrop,
                 expiresIn: "7d",
                 token: token
             }

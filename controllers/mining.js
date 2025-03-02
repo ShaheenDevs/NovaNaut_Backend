@@ -6,11 +6,17 @@ const manageMining = async (req, res) => {
         let user = await models.User.findByPk(userId);
         if (!user) return res.status(404).json({ error: "User not found" });
 
+        // ✅ Check for active boosting plan
+        let boostingPlan = null;
+        if (user.boostingExpiryDate && new Date(user.boostingExpiryDate) > new Date()) {
+            boostingPlan = await models.BoostingPlan.findByPk(user.boostingPlanId);
+        }
+
         const currentTime = new Date();
         let elapsedHours = 0;
         let minedAmount = 0;
         let miningActive = false;
-        const miningRate = user.miningLevel * 0.02; // Mining rate per hour
+        const miningRate = (user.miningLevel * (0.02)) + boostingPlan.power;
 
         if (user.miningStartTime) {
             elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
@@ -69,13 +75,27 @@ const checkMiningStatus = async (req, res) => {
     try {
         const { userId } = req.userData;
         let user = await models.User.findByPk(userId);
+
         if (!user) return res.status(404).json({ error: "User not found" });
+        const airdrop = await models.Airdrop.findOne({ where: { userId: user.id, status: "pending" } });
+
+        // ✅ Check for active boosting plan
+        let boostingPlan = null;
+        if (user.boostingExpiryDate && new Date(user.boostingExpiryDate) > new Date()) {
+            boostingPlan = await models.BoostingPlan.findByPk(user.boostingPlanId);
+        }
+        allowBoostingClime = false;
+
+        // Check if boosting is already pending
+        if (user.boostingPlanId != null && user.boostingExpiryDate === null) {
+            allowBoostingClime = true;
+        }
 
         const currentTime = new Date();
         let elapsedHours = 0;
         let minedAmount = 0;
         let miningActive = false;
-        const miningRate = user.miningLevel * 0.02; // Mining rate per hour
+        const miningRate = (user.miningLevel * (0.02)) + boostingPlan.power;
 
         if (user.miningStartTime) {
             elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
@@ -91,26 +111,41 @@ const checkMiningStatus = async (req, res) => {
 
                 return res.json({
                     message: "Mining active, status checked",
-                    miningActive: true,
-                    minedAmount,
-                    balance: user.balance,
-                    timeLeft, // Proper HH:MM format
-                    timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
-                    miningRate,
-                    miningStartTime: user.miningStartTime,
+                    date: {
+                        miningActive: true,
+                        minedAmount,
+                        balance: user.balance,
+                        timeLeft, // Proper HH:MM format
+                        timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
+                        miningRate,
+                        miningStartTime: user.miningStartTime,
+                        miningLevel: user.miningLevel,
+                        airdrop,
+                        allowBoostingClime,
+                        boostingPlanId: user.boostingPlanId,
+                        boostingPlan,
+                    }
+
                 });
             }
         }
 
         return res.json({
             message: "Mining session expired, status checked",
-            miningActive: false,
-            minedAmount: parseFloat((24 * miningRate).toFixed(2)),
-            balance: user.balance,
-            timeLeft: "00:00",
-            timePercentage: "0",
-            miningRate,
-            miningStartTime: user.miningStartTime,
+            data: {
+                miningActive: false,
+                minedAmount: parseFloat((24 * miningRate).toFixed(2)),
+                balance: user.balance,
+                timeLeft: "00:00",
+                timePercentage: "0",
+                miningRate,
+                miningStartTime: user.miningStartTime,
+                miningLevel: user.miningLevel,
+                airdrop,
+                allowBoostingClime,
+                boostingPlanId: user.boostingPlanId,
+                boostingPlan,
+            }
         });
 
     } catch (error) {

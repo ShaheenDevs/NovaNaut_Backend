@@ -9,7 +9,7 @@ const assignAirdrop = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const airdrops = await Airdrop.findOne({ where: { userId, status: "pending" } });
-        if (airdrops) return res.status(404).json({ message: "Aleary not climed" });
+        if (airdrops) return res.status(404).json({ message: "Already not climed" });
 
         const airdrop = await Airdrop.create({ userId, tokens, status: "pending" });
         res.status(201).json({ message: "Airdrop assigned", airdrop });
