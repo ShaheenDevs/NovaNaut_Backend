@@ -5,7 +5,7 @@ const getLeaderboard = async (req, res) => {
         const { limit = 10, offset = 0 } = req.query; // Pagination support
 
         const users = await models.User.findAll({
-            attributes: ['id', 'fullName', 'email', 'balance'],
+            attributes: ['id', 'fullName', "email", "profile", "country", "kyc", 'balance'],
             order: [['balance', 'DESC']], // Sort users by balance in descending order
             limit: parseInt(limit),
             offset: parseInt(offset)
@@ -27,7 +27,7 @@ const getUserRank = async (req, res) => {
         const { userId } = req.params;
 
         const users = await models.User.findAll({
-            attributes: ['id', 'fullName', 'balance'],
+            attributes: ['id', 'fullName', "email", "profile", "country", "kyc", 'balance'],
             order: [['balance', 'DESC']],
         });
 

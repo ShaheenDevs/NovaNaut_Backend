@@ -11,9 +11,9 @@ const getInvitations = async (req, res) => {
         }
 
         const invitations = await models.Invitation.findAll({
-            where: {reReferralBy: userId },
+            where: { reReferralBy: userId },
             include: [
-                { model: models.User, as: "user", attributes: ["id", "fullName", "email"] },
+                { model: models.User, as: "user", attributes: ["id", "fullName", "email", "profile"] },
             ],
             order: [["createdAt", "DESC"]]
         });
