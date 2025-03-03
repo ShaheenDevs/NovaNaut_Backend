@@ -2,19 +2,25 @@ const models = require("../models");
 
 const getLeaderboard = async (req, res) => {
     try {
-        const { limit = 10, offset = 0 } = req.query; // Pagination support
+        const { limit = 10, offset = 0 } = req.query;
 
-        const users = await models.User.findAll({
+        // Fetch all users ordered by balance to get correct rank
+        const allUsers = await models.User.findAll({
             attributes: ['id', 'fullName', "email", "profile", "country", "kyc", 'balance'],
-            order: [['balance', 'DESC']], // Sort users by balance in descending order
-            limit: parseInt(limit),
-            offset: parseInt(offset)
+            order: [['balance', 'DESC']]
         });
+
+        // Paginate the users and assign ranks
+        const paginatedUsers = allUsers.slice(parseInt(offset), parseInt(offset) + parseInt(limit))
+            .map((user, index) => ({
+                ...user.toJSON(),
+                rank: parseInt(offset) + index + 1 // Correct rank calculation
+            }));
 
         res.status(200).json({
             status: 200,
             message: "Leaderboard fetched successfully",
-            data: users
+            data: paginatedUsers
         });
     } catch (error) {
         console.error("Leaderboard error:", error);

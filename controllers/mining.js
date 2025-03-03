@@ -111,7 +111,7 @@ const checkMiningStatus = async (req, res) => {
 
                 return res.json({
                     message: "Mining active, status checked",
-                    date: {
+                    data: {
                         miningActive: true,
                         minedAmount,
                         balance: user.balance,
