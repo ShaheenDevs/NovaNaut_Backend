@@ -47,7 +47,6 @@ const getMessages = async (req, res) => {
   }
 };
 
-
 const getUserList = async (req, res) => {
     try {
         const { userId, page = 1, limit = 10 } = req.query;
@@ -60,23 +59,27 @@ const getUserList = async (req, res) => {
 
         const userList = await models.Message.findAll({
             attributes: [
-                [Sequelize.literal(`CASE WHEN \`Message\`.\`senderId\` = ${userId} THEN \`Message\`.\`receiverId\` ELSE \`Message\`.\`senderId\` END`), "userId"],
-                [Sequelize.literal(`(
-                    SELECT M.message 
-                    FROM \`Messages\` AS M 
-                    WHERE (M.senderId = \`Message\`.senderId AND M.receiverId = \`Message\`.receiverId) 
-                        OR (M.senderId = \`Message\`.receiverId AND M.receiverId = \`Message\`.senderId) 
-                    ORDER BY M.createdAt DESC 
-                    LIMIT 1
-                )`), "lastMessage"],
-                [Sequelize.literal(`(
-                    SELECT M.createdAt 
-                    FROM \`Messages\` AS M 
-                    WHERE (M.senderId = \`Message\`.senderId AND M.receiverId = \`Message\`.receiverId) 
-                        OR (M.senderId = \`Message\`.receiverId AND M.receiverId = \`Message\`.senderId) 
-                    ORDER BY M.createdAt DESC 
-                    LIMIT 1
-                )`), "lastMessageTime"],
+                [
+                    Sequelize.literal(`CASE 
+                        WHEN \`Message\`.\`senderId\` = ${userId} THEN \`Message\`.\`receiverId\` 
+                        ELSE \`Message\`.\`senderId\` END`),
+                    "userId"
+                ],
+                [
+                    Sequelize.literal(`(
+                        SELECT M.message 
+                        FROM \`Messages\` AS M 
+                        WHERE (M.senderId = \`Message\`.senderId AND M.receiverId = \`Message\`.receiverId) 
+                           OR (M.senderId = \`Message\`.receiverId AND M.receiverId = \`Message\`.senderId) 
+                        ORDER BY M.createdAt DESC 
+                        LIMIT 1
+                    )`),
+                    "lastMessage"
+                ],
+                [
+                    Sequelize.fn("MAX", Sequelize.col("Message.createdAt")),
+                    "lastMessageTime"
+                ]
             ],
             include: [
                 {
@@ -93,7 +96,18 @@ const getUserList = async (req, res) => {
             where: {
                 [Op.or]: [{ senderId: userId }, { receiverId: userId }],
             },
-            group: ["userId"],
+            group: [
+                "Message.senderId",
+                "Message.receiverId",
+                "sender.id",
+                "sender.fullName",
+                "sender.email",
+                "sender.profile",
+                "receiver.id",
+                "receiver.fullName",
+                "receiver.email",
+                "receiver.profile"
+            ],
             order: [[Sequelize.literal("lastMessageTime"), "DESC"]],
             limit: parseInt(limit),
             offset: parseInt(offset),
