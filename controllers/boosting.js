@@ -4,8 +4,8 @@ const { Op } = require('sequelize');
 // 🎯 Create Boosting Plan
 const createBoostingPlan = async (req, res) => {
     try {
-        const { name, durationDays, price, power } = req.body;
-        const plan = await models.BoostingPlan.create({ name, durationDays, price, power });
+        const { name, durationDays, price,image, power } = req.body;
+        const plan = await models.BoostingPlan.create({ name, durationDays,image, price, power });
 
         res.status(201).json({ status: 201, message: "Boosting plan created", data: plan });
     } catch (error) {
@@ -47,12 +47,12 @@ const getBoostingPlans = async (req, res) => {
 const updateBoostingPlan = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, durationDays, price, power } = req.body;
+        const { name, durationDays, price,image, power } = req.body;
 
         const plan = await models.BoostingPlan.findByPk(id);
         if (!plan) return res.status(404).json({ status: 404, message: "Plan not found" });
 
-        await plan.update({ name, durationDays, price, power });
+        await plan.update({ name, durationDays, price,image, power });
 
         res.json({ status: 200, message: "Boosting plan updated", data: plan });
     } catch (error) {
