@@ -16,7 +16,7 @@ const manageMining = async (req, res) => {
         let elapsedHours = 0;
         let minedAmount = 0;
         let miningActive = false;
-        const miningRate = (user.miningLevel * (0.02)) + boostingPlan.power;
+        const miningRate = (user.miningLevel * 0.02) + (boostingPlan?.power ?? 0);
 
         if (user.miningStartTime) {
             elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
@@ -95,7 +95,7 @@ const checkMiningStatus = async (req, res) => {
         let elapsedHours = 0;
         let minedAmount = 0;
         let miningActive = false;
-        const miningRate = (user.miningLevel * (0.02)) + boostingPlan.power;
+        const miningRate = (user.miningLevel * 0.02) + (boostingPlan?.power ?? 0);
 
         if (user.miningStartTime) {
             elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
