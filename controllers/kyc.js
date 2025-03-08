@@ -3,22 +3,30 @@ const models = require("../models");
 // ✅ 1. KYC Document
 const addKYC = async (req, res) => {
   try {
-    const { cnicFrontUrl, cnicBackUrl } = req.body;
+    const { cnicFrontUrl, cnicBackUrl, userImageUrl } = req.body;
     const userId = req.userData.userId;
 
-    if (!cnicFrontUrl && !cnicBackUrl) {
+    if (!cnicFrontUrl && !cnicBackUrl && !userImageUrl) {
       return res.status(400).json({ status: 400, message: "No document uploaded" });
     }
 
     const existingKYC = await models.KYC.findOne({ where: { userId } });
+
     if (existingKYC) {
-      return res.status(400).json({ status: 400, message: "KYC already submitted" });
+      const updateKYC = await existingKYC.update({
+        cnicFrontUrl,
+        cnicBackUrl,
+        userImageUrl,
+      });
+      return res.status(200).json({ status: 200, message: "KYC updated successfully", data: updateKYC });
     }
 
+    // Creating new KYC if no existing record found
     const newKYC = await models.KYC.create({
       userId,
       cnicFrontUrl,
       cnicBackUrl,
+      userImageUrl,
       status: "pending",
     });
 
@@ -27,7 +35,6 @@ const addKYC = async (req, res) => {
     console.error("KYC Upload Error:", error);
     res.status(500).json({ status: 500, message: "Error submitting KYC", error: error.message });
   }
-
 };
 
 // ✅ 2. Approve/Reject KYC (Admin Action)
