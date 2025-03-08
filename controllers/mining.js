@@ -1,4 +1,6 @@
 const models = require("../models");
+const cron = require('node-cron');
+const { Op } = require('sequelize');
 
 const manageMining = async (req, res) => {
     try {
@@ -96,6 +98,7 @@ const checkMiningStatus = async (req, res) => {
         let minedAmount = 0;
         let miningActive = false;
         const miningRate = (user.miningLevel * 0.02) + (boostingPlan?.power ?? 0);
+        const kyc = await models.KYC.findOne({ where: { userId: user.id }, attributes: ['status', 'rejectionReason'] });
 
         if (user.miningStartTime) {
             elapsedHours = (currentTime - new Date(user.miningStartTime)) / (1000 * 60 * 60);
@@ -120,10 +123,11 @@ const checkMiningStatus = async (req, res) => {
                         miningRate,
                         miningStartTime: user.miningStartTime,
                         miningLevel: user.miningLevel,
-                        airdrop,
                         allowBoostingClime,
                         boostingPlanId: user.boostingPlanId,
+                        kyc,
                         boostingPlan,
+                        airdrop,
                     }
 
                 });
@@ -141,10 +145,11 @@ const checkMiningStatus = async (req, res) => {
                 miningRate,
                 miningStartTime: user.miningStartTime,
                 miningLevel: user.miningLevel,
-                airdrop,
                 allowBoostingClime,
                 boostingPlanId: user.boostingPlanId,
+                kyc,
                 boostingPlan,
+                airdrop,
             }
         });
 
@@ -154,33 +159,50 @@ const checkMiningStatus = async (req, res) => {
 };
 
 // Upgrade Mining Level
-const upgradeMiningLevel = async (req, res) => {
+const upgradeMiningLevelForActiveUsers = async () => {
     try {
-        const { userId } = req.userData;
+        const fiveDaysAgo = new Date();
+        fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
 
-        let user = await models.User.findByPk(userId);
-        if (!user) return res.status(404).json({ error: "User not found" });
-
-        const upgradeCost = user.miningLevel * 100;
-        if (user.balance < upgradeCost) {
-            return res.status(400).json({ error: "Insufficient balance" });
-        }
-
-        await models.sequelize.transaction(async (t) => {
-            user.balance -= upgradeCost;
-            user.miningLevel += 1;
-            await user.save({ transaction: t });
+        const activeUsers = await models.User.findAll({
+            where: { updatedAt: { [Op.gte]: fiveDaysAgo } }
         });
 
-        res.json({ message: "Mining level upgraded!", newLevel: user.miningLevel });
+        for (const user of activeUsers) {
+            const invitationCount = await models.Invitation.count({
+                where: { reReferralBy: user.id, status: "accepted" }
+            });
 
+            let targetLevel = 1; // Default starting level
+            if (invitationCount >= 10) targetLevel = 1;
+            if (invitationCount >= 20) targetLevel = 2;
+            if (invitationCount >= 30) targetLevel = 3;
+            if (invitationCount >= 40) targetLevel = 4;
+            if (invitationCount >= 50) targetLevel = 5;
+            if (invitationCount >= 60) targetLevel = 6;
+
+            if (user.miningLevel !== targetLevel) {
+                await models.User.update(
+                    { miningLevel: targetLevel },
+                    { where: { id: user.id } }
+                );
+                console.log(`User ID ${user.id} upgraded to level ${targetLevel}`);
+            }
+        }
+
+        console.log("Mining level upgrade cron job completed successfully.");
     } catch (error) {
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
+        console.error("Error in upgradeMiningLevelForActiveUsers:", error.message);
     }
 };
+
+// Run cron job every day at 1 AM
+cron.schedule('0 1 * * *', upgradeMiningLevelForActiveUsers);
+
+console.log("✅ Cron job scheduled: Running every day at 1 AM.");
+
 
 module.exports = {
     manageMining,
     checkMiningStatus,
-    upgradeMiningLevel,
 };

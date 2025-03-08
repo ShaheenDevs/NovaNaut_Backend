@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   KYC.init({
     userId: DataTypes.INTEGER,
-    documentType: DataTypes.STRING,
-    documentImage: DataTypes.STRING,
+    cnicFrontUrl: DataTypes.STRING,
+    cnicBackUrl: DataTypes.STRING,
     status: DataTypes.STRING,
     rejectionReason: DataTypes.STRING
   }, {

@@ -3,10 +3,10 @@ const models = require("../models");
 // ✅ 1. KYC Document
 const addKYC = async (req, res) => {
   try {
-    const { image, documentType } = req.body;
+    const { cnicFrontUrl, cnicBackUrl } = req.body;
     const userId = req.userData.userId;
 
-    if (!image) {
+    if (!cnicFrontUrl && !cnicBackUrl) {
       return res.status(400).json({ status: 400, message: "No document uploaded" });
     }
 
@@ -17,8 +17,8 @@ const addKYC = async (req, res) => {
 
     const newKYC = await models.KYC.create({
       userId,
-      documentType,
-      documentImage: image,
+      cnicFrontUrl,
+      cnicBackUrl,
       status: "pending",
     });
 
