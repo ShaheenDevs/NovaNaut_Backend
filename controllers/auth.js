@@ -253,6 +253,40 @@ const signIn = async (req, res) => {
     }
 };
 
+const updateVerification = async (req, res) => {
+    try {
+        const { userId, emailVerified, phoneVerified } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ status: 400, message: 'User ID is required.' });
+        }
+
+        const user = await models.User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ status: 404, message: 'User not found.' });
+        }
+
+        // Update user data
+        await user.update({ emailVerified, phoneVerified });
+
+        res.status(200).json({
+            status: 200,
+            message: 'User verification details updated successfully.',
+            data: user
+        });
+
+    } catch (error) {
+        console.error("Update verification error:", error);
+        res.status(500).json({
+            status: 500,
+            message: "An error occurred while updating verification details.",
+            error: error.message
+        });
+    }
+};
+
+
 const delUser = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -322,7 +356,7 @@ module.exports = {
     signUp,
     signIn,
     delUser,
-    verifyEmail,
+    updateVerification,
     updateProfile,
 };
 

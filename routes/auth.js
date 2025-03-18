@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/signIn', authCtrl.signIn);
 router.post('/signUp', authCtrl.signUp);
 router.delete('/delUser/:id', checkAuth, authCtrl.delUser);
-router.get('/verifyEmail', authCtrl.verifyEmail);
+router.post('/updateVerification', authCtrl.updateVerification);
 router.put('/updateProfile', checkAuth, authCtrl.updateProfile);
 
 module.exports = router;
