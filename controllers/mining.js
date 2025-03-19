@@ -117,7 +117,7 @@ const checkMiningStatus = async (req, res) => {
                     data: {
                         miningActive: true,
                         minedAmount,
-                        balance: user.balance,
+                        balance: user.balance + minedAmount,
                         timeLeft, // Proper HH:MM format
                         timePercentage: ((elapsedHours / 24) * 100).toFixed(2),
                         miningRate,
@@ -139,7 +139,7 @@ const checkMiningStatus = async (req, res) => {
             data: {
                 miningActive: false,
                 minedAmount: parseFloat((24 * miningRate).toFixed(2)),
-                balance: user.balance,
+                balance: user.balance + minedAmount,
                 timeLeft: "00:00",
                 timePercentage: "0",
                 miningRate,
