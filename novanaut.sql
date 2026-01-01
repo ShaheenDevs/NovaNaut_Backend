@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 27, 2025 at 06:23 PM
+-- Generation Time: Jan 01, 2026 at 10:31 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,57 @@ SET time_zone = "+00:00";
 --
 -- Database: `novanaut`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Airdrops`
+--
+
+CREATE TABLE `Airdrops` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `tokens` int(11) DEFAULT NULL,
+  `claimedAt` datetime DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Airdrops`
+--
+
+INSERT INTO `Airdrops` (`id`, `userId`, `tokens`, `claimedAt`, `createdAt`, `updatedAt`, `status`) VALUES
+(1, 1, 20, '2025-03-02 07:18:52', '2025-03-02 06:57:42', '2025-03-02 07:18:52', 'claimed'),
+(2, 2, 30, NULL, '2025-03-02 07:07:00', '2025-03-02 07:07:00', 'pending'),
+(3, 1, 30, '2025-03-02 10:32:42', '2025-03-02 10:28:25', '2025-03-02 10:32:42', 'claimed'),
+(4, 1, 30, '2025-10-08 17:57:38', '2025-03-02 10:45:12', '2025-10-08 17:57:38', 'claimed');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `BoostingPlans`
+--
+
+CREATE TABLE `BoostingPlans` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `durationDays` int(11) DEFAULT NULL,
+  `price` float DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `power` float DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `BoostingPlans`
+--
+
+INSERT INTO `BoostingPlans` (`id`, `name`, `durationDays`, `price`, `createdAt`, `updatedAt`, `power`, `image`) VALUES
+(1, 'Gold', 7, 10, '2025-03-02 07:48:37', '2025-03-02 07:58:25', 0.02, NULL),
+(2, 'Gold', 7, 10, '2025-03-05 01:17:44', '2025-03-05 01:17:44', 0.02, 'tetst');
 
 -- --------------------------------------------------------
 
@@ -68,6 +119,33 @@ INSERT INTO `Invitations` (`id`, `reReferralBy`, `newUserId`, `status`, `created
 (6, 1, 8, 'accepted', '2025-02-27 14:36:48', '2025-02-27 14:41:32'),
 (7, 1, 10, 'pending', '2025-02-27 16:15:45', '2025-02-27 16:15:45'),
 (8, 1, 11, 'pending', '2025-02-27 16:54:40', '2025-02-27 16:54:40');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `KYCs`
+--
+
+CREATE TABLE `KYCs` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `cnicFrontUrl` varchar(255) DEFAULT NULL,
+  `cnicBackUrl` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `rejectionReason` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `userImageUrl` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `KYCs`
+--
+
+INSERT INTO `KYCs` (`id`, `userId`, `cnicFrontUrl`, `cnicBackUrl`, `status`, `rejectionReason`, `createdAt`, `updatedAt`, `userImageUrl`) VALUES
+(1, 1, 'cnicFrontUrl', 'cnicBackUrl', 'approved', NULL, '2025-03-08 10:27:12', '2025-03-08 23:25:23', 'userImageUrl'),
+(2, 1, 'cnicFrontUrl', 'cnicBackUrl', 'pending', NULL, '2025-03-08 23:25:24', '2025-03-08 23:25:24', 'userImageUrl'),
+(3, 1, 'cnicFrontUrl', 'cnicBackUrl', 'pending', NULL, '2025-03-08 23:25:44', '2025-03-08 23:25:44', 'userImageUrl');
 
 -- --------------------------------------------------------
 
@@ -138,7 +216,7 @@ CREATE TABLE `Mineds` (
 --
 
 INSERT INTO `Mineds` (`id`, `totalMineableTokens`, `totalMinedTokens`, `remainderTokens`, `isAllow`, `createdAt`, `updatedAt`) VALUES
-(1, 600000, 310, 599690, 1, '2025-02-22 10:46:12', '2025-02-27 13:00:00');
+(1, 600000, 396, 599604, 1, '2025-02-22 10:46:12', '2025-10-15 07:00:00');
 
 -- --------------------------------------------------------
 
@@ -185,6 +263,33 @@ INSERT INTO `Notifications` (`id`, `title`, `description`, `link`, `imageUrl`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Payments`
+--
+
+CREATE TABLE `Payments` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `planId` int(11) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `paymentMethod` varchar(255) DEFAULT NULL,
+  `transactionId` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `Payments`
+--
+
+INSERT INTO `Payments` (`id`, `userId`, `planId`, `amount`, `paymentMethod`, `transactionId`, `status`, `createdAt`, `updatedAt`) VALUES
+(1, 1, 1, 10, 'jazzCash', 'Nosddsfsd', 'success', '2025-03-02 11:16:54', '2025-03-02 11:16:54'),
+(2, 1, 1, 10, 'jazzCash', 'Nosddsfsd', 'success', '2025-03-02 11:18:38', '2025-03-02 11:18:38'),
+(3, 1, 1, 10, 'jazzCash', 'Nosddsfsd', 'success', '2025-03-04 01:39:48', '2025-03-04 01:39:48');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `SequelizeMeta`
 --
 
@@ -206,7 +311,11 @@ INSERT INTO `SequelizeMeta` (`name`) VALUES
 ('20250224024131-create-message.js'),
 ('20250225153628-create-invitation.js'),
 ('20250226015750-create-mining.js'),
-('20250227163744-create-level.js');
+('20250227163744-create-level.js'),
+('20250301231515-create-airdrop.js'),
+('20250302074331-create-boosting-plan.js'),
+('20250302111503-create-payment.js'),
+('20250308094923-create-kyc.js');
 
 -- --------------------------------------------------------
 
@@ -224,7 +333,7 @@ CREATE TABLE `Users` (
   `kyc` tinyint(1) DEFAULT 0,
   `blocked` tinyint(1) DEFAULT 0,
   `subscribedPlan` varchar(255) DEFAULT 'free',
-  `balance` int(11) DEFAULT 0,
+  `balance` float DEFAULT 0,
   `emailVerified` tinyint(1) DEFAULT 0,
   `miningLevel` int(11) DEFAULT 0,
   `createdAt` datetime NOT NULL,
@@ -233,24 +342,34 @@ CREATE TABLE `Users` (
   `miningStartTime` datetime DEFAULT NULL,
   `streakStartDate` datetime DEFAULT NULL,
   `streakLastDate` datetime DEFAULT NULL,
-  `refId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'NONA'
+  `refId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'NONA',
+  `boostingPlanId` int(11) DEFAULT 0,
+  `boostingExpiryDate` datetime DEFAULT NULL,
+  `phoneVerified` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `Users`
 --
 
-INSERT INTO `Users` (`id`, `fullName`, `email`, `phoneNo`, `country`, `password`, `kyc`, `blocked`, `subscribedPlan`, `balance`, `emailVerified`, `miningLevel`, `createdAt`, `updatedAt`, `profile`, `miningStartTime`, `streakStartDate`, `streakLastDate`, `refId`) VALUES
-(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'Pakistan', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 1, 0, 'free', 210, 1, 3, '2025-02-15 11:26:48', '2025-02-27 11:37:54', 'https://picsum.photos/200', '2025-02-27 11:20:23', NULL, NULL, 'SHAHEENDEV'),
-(2, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 100, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(4, 'Fazan', 'xyz1@gmail.com', '1234567890', 'PK', '$2a$12$gfPhvbsX96nWpdgjdR8uqunllNGRURs/APC4CjRUUPBlNVEIiqrV2', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:32:59', '2025-02-27 14:32:59', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(5, 'Laiba', 'xyz2@gmail.com', '1234567890', 'PK', '$2a$12$9rP4Q/R8hQVYxpepTagiru9hxQr3E0xHfNgJ2KQIfrmOmKYdSmXce', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:34:43', '2025-02-27 14:34:43', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(6, 'M Ali', 'xyz3@gmail.com', '1234567890', 'PK', '$2a$12$zZlXxgNurveJ21PjdOE2gOPfU/ocxRH14puJis7rM2EaC2Xbur5sG', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:35:36', '2025-02-27 14:35:36', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(7, 'M Ali', 'xyz4@gmail.com', '1234567890', 'PK', '$2a$12$9UHcn4.XUobuGDUXx6a2.ux2gwjSYYgb0de6Nn6i39znf9U/bW/CG', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:36:10', '2025-02-27 14:36:10', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(8, 'Misha', 'xyz5@gmail.com', '1234567890', 'PK', '$2a$12$JyB2oMYYQJXYKGJyW6EG2OYiDNeLCg41XqvaVzhmG/ZkJePXz2qri', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:36:45', '2025-02-27 14:36:45', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(9, 'M Ali', 'xyz6@gmail.com', '1234567890', 'PK', '$2a$12$D7jIZSPBX6HbBMDEEmVeCeIqYOifqDCQqx5p.y79CmOMHLHo41Duq', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:11:13', '2025-02-27 16:11:13', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(10, 'M Ali', 'xyz7@gmail.com', '1234567890', 'PK', '$2a$12$YBizq29r5pnolwt7J4/CjuABfnypPZSUbHt8EszJr4Xe9RLk2nGaS', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:15:45', '2025-02-27 16:15:45', 'https://picsum.photos/200', NULL, NULL, NULL, 'nona'),
-(11, 'M Ali', 'xyz8@gmail.com', '1234567890', 'PK', '$2a$12$QfbVABtCwZCur9bZZBV7DuehYy7rLCnoY06xb64GDzG2SCcJKI9Hm', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:54:40', '2025-02-27 16:54:40', 'https://picsum.photos/200', NULL, NULL, NULL, 'NONA');
+INSERT INTO `Users` (`id`, `fullName`, `email`, `phoneNo`, `country`, `password`, `kyc`, `blocked`, `subscribedPlan`, `balance`, `emailVerified`, `miningLevel`, `createdAt`, `updatedAt`, `profile`, `miningStartTime`, `streakStartDate`, `streakLastDate`, `refId`, `boostingPlanId`, `boostingExpiryDate`, `phoneVerified`) VALUES
+(1, 'Mudassir', 'abc@gmail.com', '1234567890', 'Pakistan', '$2a$12$q1JORr1vI.6IipeDKmX7Xuk7zCwQ2gX2uuRVP0z4jWWiykKVVIMU.', 1, 0, 'free', 296.44, 1, 1, '2025-02-15 11:26:48', '2025-10-17 11:07:46', 'uploads/1759946335101.png', '2025-10-17 11:07:46', NULL, NULL, 'SHAHEENDEV', 1, '2025-03-11 01:39:48', 1),
+(2, 'M Ali', 'xyz@gmail.com', '1234567890', 'PK', '$2a$12$E8XTcO5IK1yN0LiAibPrruTSi3LSXcJR00onrQqmXYJXTa4R/8DEe', 0, 0, 'free', 100, 0, 1, '2025-02-16 09:30:49', '2025-02-16 09:30:49', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(4, 'Fazan', 'xyz1@gmail.com', '1234567890', 'PK', '$2a$12$gfPhvbsX96nWpdgjdR8uqunllNGRURs/APC4CjRUUPBlNVEIiqrV2', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:32:59', '2025-02-27 14:32:59', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(5, 'Laiba', 'xyz2@gmail.com', '1234567890', 'PK', '$2a$12$9rP4Q/R8hQVYxpepTagiru9hxQr3E0xHfNgJ2KQIfrmOmKYdSmXce', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:34:43', '2025-02-27 14:34:43', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(6, 'M Ali', 'xyz3@gmail.com', '1234567890', 'PK', '$2a$12$zZlXxgNurveJ21PjdOE2gOPfU/ocxRH14puJis7rM2EaC2Xbur5sG', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:35:36', '2025-02-27 14:35:36', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(7, 'M Ali', 'xyz4@gmail.com', '1234567890', 'PK', '$2a$12$9UHcn4.XUobuGDUXx6a2.ux2gwjSYYgb0de6Nn6i39znf9U/bW/CG', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:36:10', '2025-02-27 14:36:10', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(8, 'Misha', 'xyz5@gmail.com', '1234567890', 'PK', '$2a$12$JyB2oMYYQJXYKGJyW6EG2OYiDNeLCg41XqvaVzhmG/ZkJePXz2qri', 0, 0, 'free', 0, 0, 1, '2025-02-27 14:36:45', '2025-02-27 14:36:45', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(9, 'M Ali', 'xyz6@gmail.com', '1234567890', 'PK', '$2a$12$D7jIZSPBX6HbBMDEEmVeCeIqYOifqDCQqx5p.y79CmOMHLHo41Duq', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:11:13', '2025-02-27 16:11:13', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(10, 'M Ali', 'xyz7@gmail.com', '1234567890', 'PK', '$2a$12$YBizq29r5pnolwt7J4/CjuABfnypPZSUbHt8EszJr4Xe9RLk2nGaS', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:15:45', '2025-02-27 16:15:45', 'uploads/1759946335101.png', NULL, NULL, NULL, 'nona', 0, NULL, 0),
+(11, 'M Ali', 'xyz8@gmail.com', '1234567890', 'PK', '$2a$12$QfbVABtCwZCur9bZZBV7DuehYy7rLCnoY06xb64GDzG2SCcJKI9Hm', 0, 0, 'free', 0, 0, 1, '2025-02-27 16:54:40', '2025-02-27 16:54:40', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(12, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$Z5uChRy6RiQLDZ4Vd8s3VeIPC0E3HXsJ3vNDSuwtnec8H.6QWL.1q', 0, 0, 'free', 0, 0, 1, '2025-03-09 23:23:10', '2025-03-09 23:23:10', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(13, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$5boRqArHALy02uK2fNgIUe5hwmKrGtQ2Iw1UMHiUdtiotdYQkUVja', 0, 0, 'free', 0, 0, 1, '2025-03-09 23:25:10', '2025-03-09 23:25:10', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(14, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$mJrE4P10miOAs/R26TP5r.1ZsdWkyW8m7ObDHPIs1KEHxjx8PZ5eu', 0, 0, 'free', 0, 0, 1, '2025-03-09 23:27:04', '2025-03-09 23:27:04', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(15, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$0KN0n1QFI6ewByVH3Vk8p.iM95KNI0wVxRyZCEjYuA4cjHo4V7YiO', 0, 0, 'free', 0, 0, 1, '2025-03-10 12:43:22', '2025-03-10 12:43:22', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(16, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$XuyZnknrzR0IEo8vDrhsV.b868t3TLg/aTVU78XHCrszpUvSdHVhW', 0, 0, 'free', 0.48, 0, 1, '2025-03-10 12:47:29', '2025-03-19 12:45:37', 'uploads/1759946335101.png', '2025-03-19 12:45:37', NULL, NULL, 'NONA', 0, NULL, 0),
+(17, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$Db9yFCMJf0RopimA9fZJB.CveRKqbAANvL9FZ.UPpP9FqLQVUI4H6', 0, 0, 'free', 0, 0, 1, '2025-03-10 12:50:47', '2025-03-10 12:50:47', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0),
+(18, 'Mudassir Mukhtar', 'mudassirmukhtar4@gmail.com', '03046303385', 'PK', '$2a$12$eH21QbFSLMKQ0GN1fEUYG.XfBV6gwBHzP6PHiHdCNniy0gxziWX4i', 0, 0, 'free', 0, 0, 1, '2025-03-10 12:53:37', '2025-03-10 12:53:37', 'uploads/1759946335101.png', NULL, NULL, NULL, 'NONA', 0, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -293,11 +412,23 @@ CREATE TABLE `Wallpapers` (
 --
 
 INSERT INTO `Wallpapers` (`id`, `title`, `imageUrl`, `category`, `createdAt`, `updatedAt`) VALUES
-(2, 'Beautiful Sunset', 'https://picsum.photos/200', 'Nature', '2025-02-16 16:30:05', '2025-02-16 16:30:05');
+(2, 'Beautiful Sunset', 'uploads/1759946335101.png', 'Nature', '2025-02-16 16:30:05', '2025-02-16 16:30:05');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `Airdrops`
+--
+ALTER TABLE `Airdrops`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `BoostingPlans`
+--
+ALTER TABLE `BoostingPlans`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `Docs`
@@ -309,6 +440,12 @@ ALTER TABLE `Docs`
 -- Indexes for table `Invitations`
 --
 ALTER TABLE `Invitations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `KYCs`
+--
+ALTER TABLE `KYCs`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -343,6 +480,12 @@ ALTER TABLE `Notifications`
   ADD KEY `fk_notifications_user` (`userId`);
 
 --
+-- Indexes for table `Payments`
+--
+ALTER TABLE `Payments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `SequelizeMeta`
 --
 ALTER TABLE `SequelizeMeta`
@@ -372,6 +515,18 @@ ALTER TABLE `Wallpapers`
 --
 
 --
+-- AUTO_INCREMENT for table `Airdrops`
+--
+ALTER TABLE `Airdrops`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `BoostingPlans`
+--
+ALTER TABLE `BoostingPlans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `Docs`
 --
 ALTER TABLE `Docs`
@@ -382,6 +537,12 @@ ALTER TABLE `Docs`
 --
 ALTER TABLE `Invitations`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `KYCs`
+--
+ALTER TABLE `KYCs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `Levels`
@@ -414,10 +575,16 @@ ALTER TABLE `Notifications`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3003;
 
 --
+-- AUTO_INCREMENT for table `Payments`
+--
+ALTER TABLE `Payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `Versions`
